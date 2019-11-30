@@ -13,6 +13,7 @@
         <a href="javascript:;" class="btn btn-primary"  @click="get">Get请求</a>
         <a href="javascript:;" class="btn btn-primary"  @click="post">Post请求</a>
         <a href="javascript:;" class="btn btn-primary"  @click="jsonp">Jsonp请求</a>
+        <a href="javascript:;" class="btn btn-primary"  @click="http">Jsonp请求</a>
     </div>
 
     <script>
@@ -20,8 +21,23 @@
         new Vue({
             el: "#app",
             data:{
-
+              msg:''
             },
+          // 全局配置
+          http: {
+              root: "https://api.zhugeio.com/"
+          },
+
+          // 全局拦截器
+          mounted: function() {
+              Vue.http.interceptor.push(function (request,next) {
+                console.log("request init");
+                  next (function (response) {
+                    console.log("response init")
+                    return response;
+                });
+              })
+          },
             methods:{
                 // Get请求
                 get: function() {
@@ -58,7 +74,25 @@
                       .then(function (res){
                         this.msg = res.data
                     });
-                }
+                },
+
+              http: function () {
+                this.$http({
+                  url: "package.json",
+                  params: {
+
+                  },
+                  headers:{
+
+                  },
+                  timeout:5,
+                  before: function () {
+                    console.log("before init")
+                  }
+                }).then(function (res) {
+              this.msg = res.data;
+                })
+              }
             }
         })
     </script>
