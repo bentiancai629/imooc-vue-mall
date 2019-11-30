@@ -1,7 +1,13 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <router-view/>
+    <router-view class="main"></router-view>
+
+    <!-- title路由 -->
+    <router-view class="left" name=title></router-view>
+
+    <!-- image路由 -->
+    <router-view class="right" name="img"></router-view>
   </div>
 </template>
 

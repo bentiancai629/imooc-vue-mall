@@ -22,19 +22,24 @@ export default new Router({
       path: '/goods/:goodsId',
       // path: '/goods/:goodsId/user/:name',
       name: 'GoodsList',
-      component: GoodsList,
-      children:[
-        {
-          path: 'title',
-          name: 'title',
-          component: Title
-        },
-        {
-          path: 'img',
-          name: 'img',
-          component: Image
-        },
-      ]
+      // component: GoodsList,
+      // children:[
+      //   {
+      //     path: 'title',
+      //     name: 'title',
+      //     component: Title
+      //   },
+      //   {
+      //     path: 'img',
+      //     name: 'img',
+      //     component: Image
+      //   },
+      // ]
+      components: {
+        default: GoodsList,
+        title: Title,
+        img: Image
+      }
     },
     // 跳转到购物车
     {

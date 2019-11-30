@@ -16,17 +16,17 @@
          <div>
              <router-view></router-view>
          </div>
-         <!-- 跳转到购物车 -->
-         <router-link to="/cart">跳转到购物车</router-link>
+         <!-- 编程路由跳转到购物车 -->
+         <router-link to="/cart">编程路由：跳转到购物车</router-link>
 
          <button @click="jump">button- 跳转到购物车页面</button>
+
+         <!-- 命名路由跳转 -->
+         <router-link v-bind:to="{ name:'cart',params:{cartId: 123} }">命名路由：跳转到购物车</router-link>
     </div>
 </template>
 
 <script>
-import HeaderComponent from 'vue'
-import OtherComponent from 'vue'
-
 export default ({
     data (){
         return {
