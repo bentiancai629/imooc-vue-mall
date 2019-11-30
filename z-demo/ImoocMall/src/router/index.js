@@ -19,7 +19,7 @@ export default new Router({
       // component: HelloWorld
     // }
     {
-      path: '/goods/:goodsId',
+      path: '/goods/123',
       // path: '/goods/:goodsId/user/:name',
       name: 'GoodsList',
       // component: GoodsList,

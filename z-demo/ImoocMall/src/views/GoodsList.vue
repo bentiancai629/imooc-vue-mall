@@ -16,11 +16,12 @@
          <div>
              <router-view></router-view>
          </div>
+        
          <!-- 编程路由跳转到购物车 -->
          <router-link to="/cart">编程路由：跳转到购物车</router-link>
-
-         <button @click="jump">button- 跳转到购物车页面</button>
-
+       
+         <button @click="jump">传参的方式   路由跳转到购物车页面</button>
+         <br>
          <!-- 命名路由跳转 -->
          <router-link v-bind:to="{ name:'cart',params:{cartId: 123} }">命名路由：跳转到购物车</router-link>
     </div>
