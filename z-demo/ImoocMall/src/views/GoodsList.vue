@@ -7,6 +7,15 @@
         <br>
         <!-- '/goods/:goodsId/user/:name', -->
          <span>{{ $route.params.name }}</span>
+
+        <!-- 子路由 路由跳转  绝对地址-->
+        <!-- <router-link to="/goods/title">显示商品标题</router-link> -->
+        <!-- <router-link to="/goods/image">显示商品图片</router-link> -->
+        <router-view></router-view>
+         <!-- 一级router-view -->
+         <!-- <div>
+             <router-view></router-view>
+         </div> -->
     </div>
 </template>
 
