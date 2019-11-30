@@ -5,9 +5,6 @@
 </template>
 
 <script>
-// import HeaderComponent from 'vue'
-// import OtherComponent from 'vue'
-
 export default ({
     data (){
         return {
