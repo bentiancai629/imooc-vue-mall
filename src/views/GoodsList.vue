@@ -15,7 +15,7 @@
                 <div class="filter-nav">
                     <span class="sortby">Sort by:</span>
                     <a href="javascript:void(0)" class="default cur">Default</a>
-                    <a href="javascript:void(0)" class="price">Price
+                    <a @click="sortGoods" href="javascript:void(0)" class="price">Price
                         <svg class="icon icon-arrow-short">
                             <use xlink:href="#icon-arrow-short"></use>
                         </svg>
@@ -66,6 +66,10 @@
                                     </div>
                                 </li>
                             </ul>
+                            <div class="load-more" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="30">
+<!--                                <div v-for="item in data" :key="item.index">{{item.name}}</div>-->
+                                加载中...
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -99,6 +103,8 @@
             return {
                 //商品数据
                 goodsList: [],
+                page: 1,
+                pageSize:8,
                 //价格区间
                 priceFilter: [
                     {
@@ -119,7 +125,9 @@
                 // 响应式弹窗
                 filterBy: false,
                 // 懒加载
-                overLayFlag: false
+                overLayFlag: false,
+                sortFlag: true,
+                busy: true,
             }
         },
 
@@ -134,16 +142,55 @@
         },
 
         methods: {
-            //加载商品数据
-            getGoodsList() {
-                axios.get("/goods").then(response => {
+            //加载商品数据 flag判断是否第一次初始化 配合滚动条
+            getGoodsList(flag) {
+                //加载时的分页参数
+                let param = {
+                    page: this.page,
+                    pageSize: this.pageSize,
+                    sort: this.sortFlag?1:-1
+                };
+
+                axios.get("/goods",{
+                    params:param
+                }).then(response => {
                     let res = response.data;
                     if (res.status == "0") {
-                        this.goodsList = res.result.list;
+                        //判断是否需要累加 默认flag是false
+                        if(flag){
+                            //需要商品信息累加
+                            this.goodsList = this.goodsList.concat(res.result.list);
+                            //商品信息无剩余信息 禁用
+                            if(res.result.count==0){
+                                this.busy = true;
+                            }else {
+                                this.busy = false;
+                            }
+                        }else {
+                            //第一次默认是填充数据 然后启动滚动条
+                            this.goodsList = res.result.list;
+                            this.busy = false;
+                        }
                     }else {
                         this.goodsList = [];
                     }
                 });
+            },
+
+            //排序 取反
+            sortGoods(){
+                this.sortFlag = !this.sortFlag;
+                this.page = 1;
+                this.getGoodsList();
+            },
+
+            //滚动条
+            loadMore(){
+                this.busy = true;
+                setTimeout(() => {
+                    this.page ++;
+                    this.getGoodsList(true);
+                }, 1000)
             },
 
             // 响应式弹出价格区间

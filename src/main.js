@@ -18,6 +18,8 @@ Vue.use(VueLazyLoad,{
   loading:"/static/loading-svg/loading-bars.svg",
 });
 
+Vue.use(infiniteScroll);
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
