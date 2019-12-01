@@ -7,6 +7,7 @@ let server = http.createServer((req,res)=>{
   //res.statusCode = 200;
   //res.setHeader("Content-Type","text/plain; charset=utf-8");
 
+  //fs文件系统  
   var pathname = url.parse(req.url).pathname;
   console.log("file:"+pathname.substring(1))
   fs.readFile(pathname.substring(1), function (err,data) {
