@@ -1,15 +1,15 @@
 <template>
    <div>
+<!-- 页头-->
        <nav-header></nav-header>
-       <div class="nav-breadcrumb-wrap">
-           <div class="container">
-               <nav class="nav-breadcrumb">
-                   <a href="/">Home</a>
-                   <span>Goods</span>
-               </nav>
-           </div>
-       </div>
-       <div class="accessory-result-page accessory-page">
+<!-- 面包屑-->
+
+            <bread>
+                <!-- 插槽slot -->
+                <span>Goods</span>
+            </bread>
+<!-- 其他 -->
+            <div class="accessory-result-page accessory-page">
            <div class="container">
                <div class="filter-nav">
                    <span class="sortby">Sort by:</span>
@@ -96,6 +96,8 @@
                </div>
            </div>
        </div>
+<!--页脚-->
+       <nav-footer></nav-footer>
    </div>
 </template>
 
@@ -104,19 +106,21 @@
     import './../assets/css/base.css'
     import './../assets/css/product.css'
 
-    import NavHeader from './../components/NavHeader.vue'
-    // import NavFooter from '@/components/NavFooter.vue'
-    import NavBread from '@/components/NavFooter.vue'
+    import NavHeader from '@/components/NavHeader'
+    import Bread from '@/components/Bread'
+    import NavFooter from '@/components/NavFooter'
 
     export default {
         data(){
             return {
-                msg: 'goodslist'
+                msg: ''
             }
         },
 
-        components:{
-            NavHeader
+        components: {
+            NavHeader,
+            NavFooter,
+            Bread,
         }
     }
 </script>

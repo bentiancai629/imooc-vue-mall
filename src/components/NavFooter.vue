@@ -1,4 +1,4 @@
-<temple>
+<template>
     <footer class="footer">
         <div class="footer__wrap">
             <div class="footer__secondary">
@@ -27,4 +27,4 @@
             </div>
         </div>
     </footer>
-</temple>
+</template>

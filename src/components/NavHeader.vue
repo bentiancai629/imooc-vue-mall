@@ -1,4 +1,4 @@
-<temple>
+<template>
     <header class="header">
         <symbol id="icon-cart" viewBox="0 0 38 32">
             <title>cart</title>
@@ -34,4 +34,4 @@
             </div>
         </div>
     </header>
-</temple>
+</template>
