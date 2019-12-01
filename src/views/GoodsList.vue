@@ -78,7 +78,6 @@
             <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
         </div>
 
-
         <!--页脚-->
         <nav-footer></nav-footer>
     </div>
