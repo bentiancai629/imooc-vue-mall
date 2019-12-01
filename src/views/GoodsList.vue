@@ -39,16 +39,17 @@
                    </div>
 
                    <!-- search result accessories list -->
+                   <!-- 商品信息列表页 -->
                    <div class="accessory-list-wrap">
                        <div class="accessory-list col-4">
                            <ul>
-                               <li>
+                               <li v-for="(item,index) in goodsList">
                                    <div class="pic">
-                                       <a href="#"><img src="static/1.jpg" alt=""></a>
+                                       <a href="#"><img v-bind:src=" '/static/'+item.productImg " alt=""></a>
                                    </div>
                                    <div class="main">
-                                       <div class="name">XX</div>
-                                       <div class="price">999</div>
+                                       <div class="name">{{ item.productName}} </div>
+                                       <div class="price">{{ item.productPrice}}</div>
                                        <div class="btn-area">
                                            <a href="javascript:;" class="btn btn--m">加入购物车</a>
                                        </div>
@@ -102,18 +103,24 @@
 </template>
 
 <script>
-    //导入样式
+    // 导入样式
     import './../assets/css/base.css'
     import './../assets/css/product.css'
 
+    // 导入组件
     import NavHeader from '@/components/NavHeader'
     import Bread from '@/components/Bread'
     import NavFooter from '@/components/NavFooter'
 
+    // 导入插件
+    import axios from 'axios'
+
+    //
     export default {
+        //data是个函数，然后页面加载data组件都不会数据串用
         data(){
             return {
-                msg: ''
+               goodsList: []
             }
         },
 
@@ -121,6 +128,21 @@
             NavHeader,
             NavFooter,
             Bread,
+        },
+        mounted: function (){
+            //初始化时候加载商品数据
+            this.getGoodsList();
+        },
+
+        methods: {
+            //加载商品数据
+            getGoodsList(){
+                axios.get("/goods").then(res=>{
+                    var res = result.data;
+                    this.goodsList = res.result;
+                });
+            }
         }
+
     }
 </script>
