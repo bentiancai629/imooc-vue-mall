@@ -29,7 +29,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/goods':{
-          target:'http://localhost:3000'
+          target:'http://localhost:3000'  //默认转发地址
       },
       '/goods/*':{
         target:'http://localhost:3000'

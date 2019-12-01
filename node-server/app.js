@@ -6,11 +6,17 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var ejs = require('ejs')
 
+// 一级路由的文件关联
 var index = require('./routes/index');
 // var users = require('./routes/users');
-// var goods = require('./routes/goods')
+var goods = require('./routes/goods')
 
 var app = express();
+
+// 加载二级路由路径
+app.use('/', index);
+// app.use('/users', users);
+app.use('/goods', goods);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,26 +31,24 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function (req,res,next) {
-  if(req.cookies.userId){
-    next();
-  }else{
-      console.log("url:"+req.originalUrl);
-      if(req.originalUrl=='/users/login' || req.originalUrl=='/users/logout' || req.originalUrl.indexOf('/goods/list')>-1){
-          next();
-      }else{
-          res.json({
-            status:'10001',
-            msg:'当前未登录',
-            result:''
-          });
-      }
-  }
-});
+// app.use(function (req,res,next) {
+//   if(req.cookies.userId){
+//     next();
+//   }else{
+//       console.log("url:"+req.originalUrl);
+//       if(req.originalUrl=='/users/login' || req.originalUrl=='/users/logout' || req.originalUrl.indexOf('/goods/list')>-1){
+//           next();
+//       }else{
+//           res.json({
+//             status:'10001',
+//             msg:'当前未登录',
+//             result:''
+//           });
+//       }
+//   }
+// });
 
-app.use('/', index);
-// app.use('/users', users);
-// app.use('/goods', goods);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
