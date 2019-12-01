@@ -29,8 +29,20 @@ router.get("/goodsrouter",function (req,res,next) {
 
 //实现goods二级路由
 router.get("/", function(req,res,next) {
-    var sort = req.param("sort");
-    Goods.find({}, function(err,doc) {
+    //排序接口 req.param解析url参数
+    let page = req.param('page');
+    let pageSize = parseInt(req.param('pageSize'));
+    // 1代表升序
+    let sort = req.param("sort");
+    let skip = (page -1) * pageSize;
+
+    let params = {};
+    // Goods是mongoose.Schema对象
+    let goodsModel = Goods.find(params).skip(skip).limit(pageSize);
+
+    goodsModel.sort({salePrice: sort});
+    goodsModel.exec(function(err,doc) {
+    // Goods.find({}, function(err,doc) {
         if (err){
             res.json({
                 status: '1',
