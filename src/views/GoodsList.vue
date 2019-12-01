@@ -7,6 +7,7 @@
             <bread>
                 <!-- 插槽slot -->
                 <span>Goods</span>
+                <span></span>
             </bread>
 <!-- 其他 -->
             <div class="accessory-result-page accessory-page">
@@ -15,25 +16,20 @@
                    <span class="sortby">Sort by:</span>
                    <a href="javascript:void(0)" class="default cur">Default</a>
                    <a href="javascript:void(0)" class="price">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
-                   <a href="javascript:void(0)" class="filterby stopPop">Filter by</a>
+                  <!-- 响应式弹出价格区间 -->
+                   <a href="javascript:void(0)" class="filterby stopPop" @click="showFilterPop">Filter by</a>
                </div>
                <div class="accessory-result">
                    <!-- filter -->
-                   <div class="filter stopPop" id="filter">
+                   <!-- 价格区间过滤 增加弹出的响应式样式-->
+                   <div class="filter stopPop" id="filter" v-bind:class="{ 'filterby-show':filterBy}">
                        <dl class="filter-price">
                            <dt>Price:</dt>
-                           <dd><a href="javascript:void(0)">All</a></dd>
-                           <dd>
-                               <a href="javascript:void(0)">0 - 100</a>
-                           </dd>
-                           <dd>
-                               <a href="javascript:void(0)">100 - 500</a>
-                           </dd>
-                           <dd>
-                               <a href="javascript:void(0)">500 - 1000</a>
-                           </dd>
-                           <dd>
-                               <a href="javascript:void(0)">1000 - 2000</a>
+                           <dd><a href="javascript:void(0)" v-bind:class="{'cur': priceChecked=='all'}" @click="setPriceFilter='all'" >All</a></dd>
+                           <!-- 价格区间v-for循环  事件：判断价格区间-->
+                           <dd v-for=" (price,index) in priceFilter" :key="index">
+                               <!-- cur判断选择哪一项 -->
+                               <a href="javascript:void(0)" @click="setPriceFilter(index)" v-bind:class="{'cur': price==index}" > {{ price.startPrice }} - {{ price.endPrice }}}</a>
                            </dd>
                        </dl>
                    </div>
@@ -43,49 +39,20 @@
                    <div class="accessory-list-wrap">
                        <div class="accessory-list col-4">
                            <ul>
-                               <li v-for="(item,index) in goodsList">
+                               <li v-for="(item, index) in goodsList" :key="index">
                                    <div class="pic">
-                                       <a href="#"><img v-bind:src=" '/static/'+item.productImg " alt=""></a>
+                                       <!-- 模板格式 -->
+                                       <!-- <a href="#"><img src="static/mi6.jpg" alt=""></a> -->
+
+                                       <!-- v-for -->
+                                       <!-- <a href="#"><img v-bind:src=" 'static/' + item.productImg " alt=""></a> -->
+
+                                       <!-- 懒加载 -->
+                                       <a href="#"><img v-lazy=" 'static/' + item.productImg " alt=""></a>
                                    </div>
                                    <div class="main">
                                        <div class="name">{{ item.productName}} </div>
                                        <div class="price">{{ item.productPrice}}</div>
-                                       <div class="btn-area">
-                                           <a href="javascript:;" class="btn btn--m">加入购物车</a>
-                                       </div>
-                                   </div>
-                               </li>
-                               <li>
-                                   <div class="pic">
-                                       <a href="#"><img src="static/2.jpg" alt=""></a>
-                                   </div>
-                                   <div class="main">
-                                       <div class="name">XX</div>
-                                       <div class="price">1000</div>
-                                       <div class="btn-area">
-                                           <a href="javascript:;" class="btn btn--m">加入购物车</a>
-                                       </div>
-                                   </div>
-                               </li>
-                               <li>
-                                   <div class="pic">
-                                       <a href="#"><img src="static/3.jpg" alt=""></a>
-                                   </div>
-                                   <div class="main">
-                                       <div class="name">XX</div>
-                                       <div class="price">500</div>
-                                       <div class="btn-area">
-                                           <a href="javascript:;" class="btn btn--m">加入购物车</a>
-                                       </div>
-                                   </div>
-                               </li>
-                               <li>
-                                   <div class="pic">
-                                       <a href="#"><img src="static/4.jpg" alt=""></a>
-                                   </div>
-                                   <div class="main">
-                                       <div class="name">XX</div>
-                                       <div class="price">2499</div>
                                        <div class="btn-area">
                                            <a href="javascript:;" class="btn btn--m">加入购物车</a>
                                        </div>
@@ -96,7 +63,11 @@
                    </div>
                </div>
            </div>
+           <!-- filterby遮罩 通过控制v-show的布尔值控制弹出 -->
+           <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
        </div>
+       
+      
 <!--页脚-->
        <nav-footer></nav-footer>
    </div>
@@ -115,12 +86,33 @@
     // 导入插件
     import axios from 'axios'
 
-    //
     export default {
         //data是个函数，然后页面加载data组件都不会数据串用
         data(){
             return {
-               goodsList: []
+                //商品数据
+                goodsList: [],
+                //价格区间
+                priceFilter: [
+                    {
+                    startPrice: '0.00',
+                    endPrice: '500.00'
+                    },
+                    {
+                    startPrice: '500.00',
+                    endPrice: '1000.00'
+                    },
+                    {
+                    startPrice: '1000.00',
+                    endPrice: '2000.00'
+                    }
+                ],
+                // 是否默认选中价格区间
+                priceChecked: 'all',
+                // 响应式弹窗
+                filterBy:false,
+                // 懒加载
+                overLayFlag:false
             }
         },
 
@@ -137,12 +129,29 @@
         methods: {
             //加载商品数据
             getGoodsList(){
-                axios.get("/goods").then(res=>{
+                axios.get("/goods").then(result=>{
                     var res = result.data;
+                    console.log(res.result);
                     this.goodsList = res.result;
                 });
+            },
+
+            // 响应式弹出价格区间
+            showFilterPop(){
+                this.filterBy = true;
+                this.overLayFlag = true;
+            },
+
+            //控制遮罩
+            setPriceFilter(index){
+                this.priceChecked = index;
+                this.closePop();
+            },
+
+            closePop(){
+                this.filterBy = false;
+                this.overLayFlag = false;
             }
         }
-
     }
 </script>
