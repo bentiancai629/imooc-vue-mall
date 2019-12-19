@@ -29,14 +29,13 @@
                     <div class="filter stopPop" id="filter" v-bind:class="{ 'filterby-show':filterBy}">
                         <dl class="filter-price">
                             <dt>Price:</dt>
-                            <dd><a href="javascript:void(0)" v-bind:class="{'cur': priceChecked=='all'}"
-                                   @click="setPriceFilter='all'">All</a></dd>
+<!--                            <dd><a href="javascript:void(0)" v-bind:class="{'cur': priceChecked=='all'}"  @click=" priceChecked='all' ">All</a></dd>-->
+                            <dd><a href="javascript:void(0)" v-bind:class="{'cur': priceChecked=='all'}"  @click=" setPriceFilter('all') ">All</a></dd>
                             <!-- 价格区间v-for循环  事件：判断价格区间-->
-                            <dd v-for=" (price,index) in priceFilter" :key="index">
+                            <dd v-for="(price,index) in priceFilter" :key="index">
                                 <!-- cur判断选择哪一项 -->
-                                <a href="javascript:void(0)" @click="setPriceFilter(index)"
-                                   v-bind:class="{'cur': price==index}"> {{ price.startPrice }} - {{ price.endPrice
-                                    }}}</a>
+                                <a href="javascript:void(0)" v-bind:class="{'cur': priceChecked==index}" @click=" setPriceFilter(index) "> {{ price.startPrice }} - {{ price.endPrice }}
+                                </a>
                             </dd>
                         </dl>
                     </div>
@@ -67,8 +66,7 @@
                                 </li>
                             </ul>
                             <div class="load-more" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="30">
-<!--                                <div v-for="item in data" :key="item.index">{{item.name}}</div>-->
-                                加载中...
+                                <<img src="./../assets/loading-spinning-bubbles.svg" v-show="loading">>
                             </div>
                         </div>
                     </div>
@@ -108,6 +106,10 @@
                 priceFilter: [
                     {
                         startPrice: '0.00',
+                        endPrice: '100.00'
+                    },
+                    {
+                        startPrice: '100.00',
                         endPrice: '500.00'
                     },
                     {
@@ -116,7 +118,7 @@
                     },
                     {
                         startPrice: '1000.00',
-                        endPrice: '2000.00'
+                        endPrice: '5000.00'
                     }
                 ],
                 // 是否默认选中价格区间
@@ -127,6 +129,7 @@
                 overLayFlag: false,
                 sortFlag: true,
                 busy: true,
+                loading:false
             }
         },
 
@@ -147,13 +150,15 @@
                 let param = {
                     page: this.page,
                     pageSize: this.pageSize,
-                    sort: this.sortFlag?1:-1
+                    sort: this.sortFlag?1:-1,
+                    priceLevel: this.priceChecked,
                 };
-
+                this.loading = true;
                 axios.get("/goods",{
                     params:param
                 }).then(response => {
                     let res = response.data;
+                    this.loading = false;
                     if (res.status == "0") {
                         //判断是否需要累加 默认flag是false
                         if(flag){
@@ -202,6 +207,7 @@
             setPriceFilter(index) {
                 this.priceChecked = index;
                 this.closePop();
+                this.getGoodsList(false);
             },
 
             closePop() {
