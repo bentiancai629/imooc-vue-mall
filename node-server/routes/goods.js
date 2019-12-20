@@ -28,6 +28,8 @@ router.get("/goodsrouter",function (req,res,next) {
 });
 
 //实现goods二级路由
+
+//查询商品列表
 router.get("/", function(req,res,next) {
     //排序接口 req.param解析url参数
     let page = req.param('page');
@@ -76,6 +78,94 @@ router.get("/", function(req,res,next) {
             });
         }
     })
+});
+
+//加入购物车
+// goods已经是1级路由 这里是2级路由
+router.post('/addCart',function (req,res,next) {
+    var userId = "100000077", productId = "201710006"; //get => param; post => req.body
+    var User = require('../models/users');
+
+    //查询一个用户
+    User.findOne({userId:userId}, function (err,userDoc){
+        if(err) {
+            console.log("查询出错：" + userId);
+            res.json({
+                status:"1",
+                msg:err.message
+            })
+        }else {
+            //查询没有error,拿到用户信息
+            //匹配userDoc的productId是否已经添加过
+            if(userDoc){
+                let goodsItem = '';
+                userDoc.cartList.forEach(function(item) {
+                    if (item.productId==productId){
+                        goodsItem = item;
+                        item.productNum ++;
+                    }
+                });
+                //判断goodsItem true or false？
+                if(goodsItem){
+                    userDoc.save(function (err2,doc2) {
+                        if(err2){
+                            console.log(err2.message);
+                            // 商品查询有错
+                            res.json({
+                                status: "1",
+                                message: err2.message
+                            })
+                        }else{
+                            //购物车信息保存成功
+                            res.json({
+                                status:"0",
+                                message:'',
+                                result:'suc'
+                            })
+                        }
+                    });
+                }else {
+                    //查询商品信息
+                    Goods.findOne({productId:productId}, function (err1,doc) {
+                        if(err1){
+                            // 商品查询有错
+                            res.json({
+                                status: "1",
+                                message: err1.message
+                            })
+                        }else{
+                            //商品查询正常
+                            if(doc){
+                                //查询结果存在
+                                doc.productNum = 1;
+                                doc.checked = 1;
+                                userDoc.cartList.push(doc);
+                                userDoc.save(function (err2,doc2) {
+                                    if(err2){
+                                        console.log(err2.message);
+                                        // 商品查询有错
+                                        res.json({
+                                            status: "1",
+                                            message: err2.message
+                                        })
+                                    }else{
+                                        //购物车信息保存成功
+                                        res.json({
+                                            status:"0",
+                                            message:'',
+                                            result:'suc'
+                                        })
+                                    }
+
+                                });
+
+                            }
+                        }
+                    });
+                }
+            };
+        }
+    });
 });
 
 module.exports = router;
