@@ -71,13 +71,14 @@
                         <h2><span>Shipping address</span></h2>
                     </div>
                     <div class="addr-list-wrap">
+<!--                        地址列表信息渲染-->
                         <div class="addr-list">
                             <ul>
-                                <li>
+                                <li v-for="item in addressList">
                                     <dl>
-                                        <dt>XXX</dt>
-                                        <dd class="address">朝阳公园</dd>
-                                        <dd class="tel">10000000000</dd>
+                                        <dt>{{ item.userName }}</dt>
+                                        <dd class="address">{{ item.streetName }}</dd>
+                                        <dd class="tel">{{ item.tel }}</dd>
                                     </dl>
                                     <div class="addr-opration addr-del">
                                         <a href="javascript:;" class="addr-del-btn">
@@ -162,7 +163,18 @@
         },
         data() {
             return {
-                msg: 'hello address'
+                addressList: []
+            }
+        },
+        mounted() {
+            this.init();
+        },
+        methods: {
+            init() {
+                axios.get("/users/addressList").then((response) => {
+                    let res = response.data;
+                    this.addressList = res.result;
+                });
             }
         }
     }

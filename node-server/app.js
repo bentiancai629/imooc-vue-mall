@@ -28,27 +28,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 使用app.use来实现登陆拦截
 // 未登录不能操作购物车
-app.use(function (req,res,next) {
-  if(req.cookies.userId){
-    // 允许执行请求到router
-    next();
-  }else{
-      console.log(`path:${req.path}, originalUrl:${req.originalUrl}`);
-      //允许登入登出
-      // location.pathname始终是'/' ; location.href=www.localhost:8989/?id=123  用path不用考虑各种参数
-      if(req.originalUrl=='/users/login' || req.originalUrl=='/users/logout' || req.path == '/goods/list'
-          // || req.originalUrl.indexof('goods/list') >-1
-      ){
-          next();
-      }else{
-          res.json({
-            status:'10001',
-            msg:'当前未登录',
-            result:''
-          });
-      }
-  }
-});
+// app.use(function (req,res,next) {
+//   if(req.cookies.userId){
+//     // 允许执行请求到router
+//     next();
+//   }else{
+//       console.log(`path:${req.path}, originalUrl:${req.originalUrl}`);
+//       //允许登入登出
+//       // location.pathname始终是'/' ; location.href=www.localhost:8989/?id=123  用path不用考虑各种参数
+//       if(req.originalUrl=='/users/login' || req.originalUrl=='/users/logout' || req.path == '/goods/list'
+//           // || req.originalUrl.indexof('goods/list') >-1
+//       ){
+//           next();
+//       }else{
+//           res.json({
+//             status:'10001',
+//             msg:'当前未登录',
+//             result:''
+//           });
+//       }
+//   }
+// });
 
 // 加载二级路由路径
 // 加载顺序必须在最后
