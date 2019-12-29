@@ -30,7 +30,7 @@ router.get("/goodsrouter",function (req,res,next) {
 //实现goods二级路由
 
 //查询商品列表
-router.get("/", function(req,res,next) {
+router.get("/list", function(req,res,next) {
     //排序接口 req.param解析url参数
     let page = req.param('page');
     let pageSize = parseInt(req.param('pageSize'));
@@ -83,11 +83,11 @@ router.get("/", function(req,res,next) {
 //加入购物车
 // goods已经是1级路由 这里是2级路由
 router.post('/addCart',function (req,res,next) {
-    var userId = "100000077", productId = "201710006"; //get => param; post => req.body
-    var User = require('../models/users');
+    var userId = "100000077", productId = req.body.productId; //get => param; post => req.body
+    var Users = require('../models/users');
 
     //查询一个用户
-    User.findOne({userId:userId}, function (err,userDoc){
+    Users.findOne({userId:userId}, function (err,userDoc){
         if(err) {
             console.log("查询出错：" + userId);
             res.json({

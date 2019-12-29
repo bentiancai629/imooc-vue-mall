@@ -77,7 +77,6 @@
 <script>
     import './../assets/css/login.css'
     import axios from 'axios'  //自动去nodemodules加载
-
     export default {
         data() {
             return {
@@ -88,7 +87,23 @@
                 nickName:false,
             }
         },
+        mounted() {
+            //检查登陆
+            this.checkLogin();
+        },
         methods: {
+            //检查是否已登陆 保持登陆状态
+            checkLogin(){
+                axios.get("/users/checkLogin").then((response)=>{
+                    let res = response.data;
+                    if(res.status=='0'){
+                        //cookies的用户名或者''
+                        this.nickName = res.result;
+                    }
+                });
+            },
+
+            //登陆
             login() {
                 //校验参数非空
                 if (!this.userName || !this.userPwd) {

@@ -24,6 +24,10 @@ router.post("/login", function(req, res, next) {
                     path:'/',
                     maxAge: 1000*60*60,  //cookies周期一小时
                 });
+                res.cookie("userName", doc.userName, {
+                    path:'/',
+                    maxAge: 1000*60*60,  //cookies周期一小时
+                });
                 // req.session.user = doc;  //存到session
                 // 请求成功
                 res.json({
@@ -53,5 +57,21 @@ router.post('/logout',function (req,res,next) {
     });
 });
 
-
+//检查登陆
+router.get("/checkLogin",function (req,res,next) {
+    if(req.cookies.userId){
+        res.json({
+            status: '0',
+            msg: '',
+            result: req.cookies.userName
+        });
+    }else{
+        //没取到cookies 没登陆
+        res.json({
+            status: '1',
+            msg: '未登录',
+            result: ''
+        });
+    }
+});
 module.exports = router;

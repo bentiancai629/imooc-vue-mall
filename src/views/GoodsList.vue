@@ -154,7 +154,8 @@
                     priceLevel: this.priceChecked,
                 };
                 this.loading = true;
-                axios.get("/goods",{
+                //查询商品列表
+                axios.get("/goods/list",{
                     params:param
                 }).then(response => {
                     let res = response.data;
@@ -223,10 +224,11 @@
                 }).then((res)=>{
                         //请求成功
                     console.log("res: " + res.status);
-                    if(res.status==200){  //todo status=0?
-                        alert("成功");
+                    if(res.status=='0'){  //todo status=0?
+                        alert("加入购物车成功: ");
                     }else {
-                        alert("失败"+res.message);
+
+                        alert("加入购物车失败: "+res.data.msg);
                     }
                 });
             }
