@@ -61,19 +61,21 @@
                             </ul>
                         </div>
                         <ul class="cart-item-list">
-<!--                            遍历渲染购物车列表-->
+                            <!--                            遍历渲染购物车列表-->
                             <li v-for="item in cartList">
                                 <div class="cart-tab-1">
                                     <div class="cart-item-check">
-                                        <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'check':item.checked=='1'}" @click="editCart('checked',item)">
+                                        <a href="javascipt:;" class="checkbox-btn item-check-btn"
+                                           v-bind:class="{'check':item.checked=='1'}" @click="editCart('checked',item)">
                                             <svg class="icon icon-ok">
                                                 <use xlink:href="#icon-ok"></use>
                                             </svg>
                                         </a>
                                     </div>
                                     <div class="cart-item-pic">
-<!--                                        alt：鼠标悬停-->
-                                        <img v-bind:src=" '/static/' + item.productImage " v-bind:alt="item.productName">
+                                        <!--                                        alt：鼠标悬停-->
+                                        <img v-bind:src=" '/static/' + item.productImage "
+                                             v-bind:alt="item.productName">
                                     </div>
                                     <div class="cart-item-title">
                                         <div class="item-name">{{ item.productName }}</div>
@@ -98,7 +100,9 @@
                                 </div>
                                 <div class="cart-tab-5">
                                     <div class="cart-item-opration">
-                                        <a href="javascript:;" class="item-edit-btn">
+                                        <!--                                        删除按钮-->
+                                        <a href="javascript:;" class="item-edit-btn"
+                                           @click="delCartConfirm(item.productId)">
                                             <svg class="icon icon-del">
                                                 <use xlink:href="#icon-del"></use>
                                             </svg>
@@ -133,12 +137,21 @@
                 </div>
             </div>
         </div>
+
+        <!--        购物车列表页模态框-->
+        <Modal :mdShow="modalConfirm" @close="closeModal">
+            <p slot="message">你确认要删除此条数据吗?</p>
+            <div slot="btnGroup">
+                <a class="btn btn--m" href="javascript:;" @click="delCart">确认</a>
+                <a class="btn btn--m" href="javascript:;" @click="modalConfirm=false">关闭</a>
+            </div>
+        </Modal>
         <nav-footer></nav-footer>
     </div>
 </template>
 
 <style>
-    .input-sub,.input-add{
+    .input-sub, .input-add {
         min-width: 40px;
         height: 100%;
         border: 0;
@@ -149,13 +162,15 @@
         display: inline-block;
         background: #f0f0f0;
     }
-    .item-quantity .select-self-area{
-        background:none;
+
+    .item-quantity .select-self-area {
+        background: none;
         border: 1px solid #f0f0f0;
     }
-    .item-quantity .select-self-area .select-ipt{
+
+    .item-quantity .select-self-area .select-ipt {
         display: inline-block;
-        padding:0 3px;
+        padding: 0 3px;
         width: 30px;
         min-width: 30px;
         text-align: center;
@@ -177,14 +192,17 @@
     export default {
         data() {
             return {
-                cartList: []
+                cartList: [],
+                productId: '',
+                modalConfirm: false,
             }
         },
         components: {
             NavHeader,
             NavFooter,
             Bread,
-            Modal
+            Modal,
+            axios,
         },
         mounted() {
             this.init();
@@ -197,6 +215,29 @@
                     this.cartList = res.result;
                 });
             },
+            //关闭模态框
+            closeModal() {
+                this.modalConfirm = false;
+            },
+            //删除购物车列表里的商品
+            delCartConfirm(productId) {
+                this.productId = productId; // 全局保存
+                this.modalConfirm = true;
+            },
+            //删除购物车
+            delCart() {
+                axios.post("/users/cartDel", {
+                    productId: this.productId
+                }).then((response) => {
+                    let res = response.data;
+                    if (res.status == '0') {
+                        this.modalConfirm = false; //关闭模态框
+                        this.init();
+                    }else{
+
+                    }
+                });
+            }
         }
     }
 </script>

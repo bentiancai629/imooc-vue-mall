@@ -34,7 +34,8 @@ module.exports = {
       '/goods/*':{
         target:'http://localhost:3000'
       },
-      '/users/*':{
+      // ** 支持3级路由
+      '/users/**':{
         target:'http://localhost:3000'
       }
     },

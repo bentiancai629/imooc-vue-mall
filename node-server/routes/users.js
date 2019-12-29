@@ -87,8 +87,8 @@ router.get("/cartList", function (req, res, next) {
             });
         } else {
             //查询请求成功
-            if(doc){
-                console.log("cartList: " + doc.cartList);
+            if (doc) {
+                console.log("cartList: " + doc.cartList[0]);
                 //数据库有数据
                 res.json({
                     status: '0',
@@ -98,6 +98,35 @@ router.get("/cartList", function (req, res, next) {
             }
         }
     })
+});
+
+//删除购物车
+router.post("/cartDel", function (req, res, next) {
+    var userId = req.cookies.userId, productId = req.body.productId;
+    Users.update({
+        userId: userId
+    }, {
+        $pull: {
+            'cartList': {
+                'productId': productId
+            }
+        }
+    },function (err,doc) {
+        if(err){
+            //删除失败
+            res.json({
+                status: '1',
+                msg: err.message,
+                result: ''
+            });
+        }else{
+            res.json({
+                status: '0',
+                msg: '',
+                result: 'suc'
+            });
+        }
+    });
 });
 
 module.exports = router;
