@@ -71,10 +71,10 @@
                         <h2><span>Shipping address</span></h2>
                     </div>
                     <div class="addr-list-wrap">
-<!--                        地址列表信息渲染-->
+                        <!--                        地址列表信息渲染-->
                         <div class="addr-list">
                             <ul>
-                                <li v-for="item in addressList">
+                                <li v-for="(item,index) in addressListFilter" v-bind:class="{'check':checkIndex==index}" @click="checkIndex=index">
                                     <dl>
                                         <dt>{{ item.userName }}</dt>
                                         <dd class="address">{{ item.streetName }}</dd>
@@ -105,8 +105,9 @@
                             </ul>
                         </div>
 
+                        <!--                        展开地址列表-->
                         <div class="shipping-addr-more">
-                            <a class="addr-more-btn up-down-btn" href="javascript:;">
+                            <a class="addr-more-btn up-down-btn" href="javascript:;" @click="expand" v-bind:class="{'open':limit>3}">
                                 more
                                 <i class="i-up-down">
                                     <i class="i-up-down-l"></i>
@@ -163,11 +164,19 @@
         },
         data() {
             return {
+                limit: 3,
+                checkIndex: 0,
                 addressList: []
             }
         },
         mounted() {
             this.init();
+        },
+        computed: {
+            addressListFilter() {
+                //街区3条
+                return this.addressList.slice(0, this.limit);
+            }
         },
         methods: {
             init() {
@@ -175,6 +184,14 @@
                     let res = response.data;
                     this.addressList = res.result;
                 });
+            },
+            //展开地址列表
+            expand() {
+                if (this.limit == 3) {
+                    this.limit = this.addressList.length;
+                }else{
+                    this.limit = 3;
+                }
             }
         }
     }
