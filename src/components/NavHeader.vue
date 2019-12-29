@@ -18,10 +18,13 @@
             </div>
             <div class="navbar-right-container" style="display: flex;">
                 <div class="navbar-menu-container">
+                    <!-- 登陆以后 显示nickname-->
+                    <!--登入登出按钮-->
+                    <span v-text="nickName" v-if="nickName"></span>
                     <!--<a href="/" class="navbar-link">我的账户</a>-->
                     <span class="navbar-link"></span>
-                    <a href="javascript:void(0)" class="navbar-link">Login</a>
-                    <a href="javascript:void(0)" class="navbar-link">Logout</a>
+                    <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true">Login</a>
+                    <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=false">Logout</a>
                     <div class="navbar-cart-container">
                         <span class="navbar-cart-count"></span>
                         <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -33,5 +36,84 @@
                 </div>
             </div>
         </div>
+        <!-- md-show 判断是否关闭-->
+        <div class="md-modal modal-msg md-modal-transition" v-bind:class="{'md-show':loginModalFlag}">
+            <div class="md-modal-inner">
+                <div class="md-top">
+                    <div class="md-title">Login in</div>
+                    <button class="md-close" @click="loginModalFlag=false">Close</button>
+                </div>
+                <div class="md-content">
+                    <div class="confirm-tips">
+                        <div class="error-wrap">
+                            <span class="error error-show" v-show="errorTip">用户名或者密码错误</span>
+                        </div>
+                        <ul>
+                            <li class="regi_form_input">
+                                <i class="icon IconPeople"></i>
+                                <input type="text" tabindex="1" name="loginname" v-model="userName"
+                                       class="regi_login_input regi_login_input_left" placeholder="User Name"
+                                       data-type="loginname">
+                            </li>
+                            <li class="regi_form_input noMargin">
+                                <i class="icon IconPwd"></i>
+                                <input type="password" tabindex="2" name="password" v-model="userPwd"
+                                       class="regi_login_input regi_login_input_left login-input-no input_text"
+                                       placeholder="Password" @keyup.enter="login">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="login-wrap">
+                        <a href="javascript:;" class="btn-login" @click="login">登 录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- filterby遮罩 通过控制v-show的布尔值控制弹出 -->
+        <div class="md-overlay" v-if="loginModalFlag" @click="LoginModalFlag=false"></div>
     </header>
 </template>
+
+<script>
+    import './../assets/css/login.css'
+    import axios from 'axios'  //自动去nodemodules加载
+
+    export default {
+        data() {
+            return {
+                userName: '',
+                userPwd: '',
+                errorTip: false,
+                loginModalFlag: false,
+                nickName:false,
+            }
+        },
+        methods: {
+            login() {
+                //校验参数非空
+                if (!this.userName || !this.userPwd) {
+                    this.errorTip = true;
+                    return
+                }
+
+                //登陆post请求
+                axios.post("/users/login", {
+                    userName: this.userName,
+                    userPwd: this.userPwd
+                }).then((response) => {
+                    let res = response.data;
+                    console.log("res.status: " + res.status);
+                    if (res.status == '0') {
+                        this.errorTip = false;
+                        this.loginModalFlag = false;
+                        this.nickName = res.result.userName;
+                    } else {
+                        this.errorTip = true;
+                    }
+                });
+
+            }
+        }
+
+    }
+</script>

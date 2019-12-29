@@ -8,15 +8,9 @@ var ejs = require('ejs')
 
 // 一级路由的文件关联
 var index = require('./routes/index');
-// var users = require('./routes/users');
+var users = require('./routes/users');
 var goods = require('./routes/goods')
-
 var app = express();
-
-// 加载二级路由路径
-app.use('/', index);
-// app.use('/users', users);
-app.use('/goods', goods);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,9 +21,10 @@ app.set('view engine', 'html');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 // app.use(function (req,res,next) {
 //   if(req.cookies.userId){
@@ -48,6 +43,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 //   }
 // });
 
+// 加载二级路由路径
+// 加载顺序必须在最后
+app.use('/', index);
+app.use('/users', users);
+app.use('/goods', goods);
 
 
 // catch 404 and forward to error handler
