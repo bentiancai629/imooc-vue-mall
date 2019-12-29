@@ -4,7 +4,6 @@
         <bread>
             <!-- 插槽slot -->
             <span>My Cart</span>
-            <span></span>
         </bread>
         <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1"
              xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -98,7 +97,8 @@
                                     </div>
                                 </div>
                                 <div class="cart-tab-4">
-                                    <div class="item-price-total">{{ item.productNum*item.salePrice | currency('￥')}}</div>
+                                    <div class="item-price-total">{{ item.productNum*item.salePrice | currency('￥')}}
+                                    </div>
                                 </div>
                                 <div class="cart-tab-5">
                                     <div class="cart-item-opration">
@@ -133,7 +133,8 @@
                                 Item total: <span class="total-price">{{ totalPrice | currency('￥') }}</span>
                             </div>
                             <div class="btn-wrap">
-                                <a class="btn btn--red">Checkout</a>
+                                <!--                                如果=0按钮禁用-->
+                                <a class="btn btn--red" v-bind:class=" {'btn--dis':checkedCount==0}" @click="checkOut">Checkout</a>
                             </div>
                         </div>
                     </div>
@@ -188,10 +189,7 @@
     import Bread from '@/components/Bread'
     import NavFooter from '@/components/NavFooter'
     import Modal from '@/components/Modal'
-
-    // 导入插件
     import axios from 'axios'
-    import {currency} from "../util/currency";
 
     export default {
         components: {
@@ -226,8 +224,8 @@
             totalPrice() {
                 var money = 0;
                 this.cartList.forEach((item) => {
-                    if (item.checked == '1'){
-                        money += parseFloat(item.salePrice)*parseInt(item.productNum);
+                    if (item.checked == '1') {
+                        money += parseFloat(item.salePrice) * parseInt(item.productNum);
                     }
                 });
                 return money;
@@ -307,6 +305,14 @@
                         // alert("update success")
                     }
                 });
+            },
+            //checkout校验 && 跳转
+            checkOut() {
+                if (this.checkedCount>0){
+                    this.$router.push({     //跳转页面
+                       path:"/address"
+                    });
+                }
             }
         }
     }
