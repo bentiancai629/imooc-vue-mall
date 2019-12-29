@@ -75,14 +75,15 @@
                         <div class="addr-list">
                             <ul>
                                 <li v-for="(item,index) in addressListFilter" v-bind:class="{'check':checkIndex==index}"
-                                    @click="checkIndex=index">
+                                    @click="checkIndex=index;selectedAddrId=item.addressId">
                                     <dl>
                                         <dt>{{ item.userName }}</dt>
                                         <dd class="address">{{ item.streetName }}</dd>
                                         <dd class="tel">{{ item.tel }}</dd>
                                     </dl>
+<!--                                    确认删除地址-->
                                     <div class="addr-opration addr-del">
-                                        <a href="javascript:;" class="addr-del-btn">
+                                        <a href="javascript:;" class="addr-del-btn" @click="delAddressConfirm(item.addressId)">
                                             <svg class="icon icon-del">
                                                 <use xlink:href="#icon-del"></use>
                                             </svg>
@@ -142,12 +143,22 @@
                             </ul>
                         </div>
                     </div>
+<!--                    下一步流程-->
                     <div class="next-btn-wrap">
-                        <a class="btn btn--m btn--red">Next</a>
+                        <router-link class="btn btn--m btn--red" v-bind:to="{path:'orderConfirm',query:{'addressId':selectedAddrId}}">Next</router-link>
                     </div>
                 </div>
             </div>
         </div>
+        <modal :mdShow="isMdShow" @close="closeModal">
+            <p slot="message">
+                你是否确认要删除此地址？
+            </p>
+            <div slot="btnGroup">
+                <a class="btn btn--m" href="javascript:;" @click="delAddress">确认</a>
+                <a class="btn btn--m" href="javascript:;" @click="isMdShow">取消</a>
+            </div>
+        </modal>
         <nav-footer></nav-footer>
     </div>
 </template>
@@ -171,7 +182,10 @@
             return {
                 limit: 3,
                 checkIndex: 0,
-                addressList: []
+                addressList: [],
+                isMdShow: false,
+                addressId: '',
+                selectedAddrId:''
             }
         },
         mounted() {
@@ -205,7 +219,30 @@
                 }).then((response) => {
                     let res = response.data;
                     if (res.status == '0') {
-                       this.init();
+                        this.init();
+                    }
+                });
+            },
+            //关闭模态框
+            closeModal() {
+                this.isMdShow = false;
+            },
+            delAddressConfirm(addressId){
+                this.isMdShow = true;
+                this.addressId = addressId;
+            },
+
+            //删除地址
+            delAddress(addressId) {
+                this.isMdShow= true; //弹出模态框
+                axios.post("/users/delAddress", {
+                    addressId: this.addressId
+                }).then((response) => {
+                    let res = response.data;
+                    if (res.status == '0') {
+                        this.isMdShow = false;
+                        console.log("删除地址成功");
+                        this.init();
                     }
                 });
             }
