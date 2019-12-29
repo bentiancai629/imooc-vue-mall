@@ -65,7 +65,8 @@
                             <li v-for="item in cartList">
                                 <div class="cart-tab-1">
                                     <div class="cart-item-check">
-                                        <a href="javascipt:;" class="checkbox-btn item-check-btn"
+<!--                                        购物车列表选中checked状态-->
+                                        <a href="javascript:;" class="checkbox-btn item-check-btn"
                                            v-bind:class="{'check':item.checked=='1'}" @click="editCart('checked',item)">
                                             <svg class="icon icon-ok">
                                                 <use xlink:href="#icon-ok"></use>
@@ -88,9 +89,10 @@
                                     <div class="item-quantity">
                                         <div class="select-self select-self-open">
                                             <div class="select-self-area">
-                                                <a class="input-sub">-</a>
-                                                <span class="select-ipt">{{ item.productNum }}</span>
-                                                <a class="input-add">+</a>
+                                                <!--                                                购物车的加减-->
+                                                <a class="input-sub" @click="editCart('minus',item)"> - </a>
+                                                <span class="select-ipt"> {{ item.productNum }} </span>
+                                                <a class="input-add" @click="editCart('add',item)"> + </a>
                                             </div>
                                         </div>
                                     </div>
@@ -195,6 +197,7 @@
                 cartList: [],
                 productId: '',
                 modalConfirm: false,
+                check:true
             }
         },
         components: {
@@ -233,10 +236,39 @@
                     if (res.status == '0') {
                         this.modalConfirm = false; //关闭模态框
                         this.init();
-                    }else{
+                    } else {
 
                     }
                 });
+            },
+            //修改购物车
+            editCart(flag, item) {
+                if (flag=='add') {
+                    item.productNum++;
+                } else if(flag=='minus'){
+                    //不能再减少商品数量
+                   if(item.productNum<=1){
+                       return;
+                   }
+                    item.productNum--;
+                }else{
+                    //checked要取反
+                    item.checked=item.checked=='1'?'0':'1';
+                }
+
+                //发送请求
+                axios.post("/users/cartEdit",{
+                    productId:item.productId,
+                    productNum:item.productNum
+                }).then((response) => {
+                    let res = response.data;
+                    if (res.status == '0') {
+
+                    } else {
+
+                    }
+                });
+
             }
         }
     }

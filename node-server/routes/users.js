@@ -88,7 +88,6 @@ router.get("/cartList", function (req, res, next) {
         } else {
             //查询请求成功
             if (doc) {
-                console.log("cartList: " + doc.cartList[0]);
                 //数据库有数据
                 res.json({
                     status: '0',
@@ -111,7 +110,36 @@ router.post("/cartDel", function (req, res, next) {
                 'productId': productId
             }
         }
-    },function (err,doc) {
+    }, function (err, doc) {
+        if (err) {
+            //删除失败
+            res.json({
+                status: '1',
+                msg: err.message,
+                result: ''
+            });
+        } else {
+            res.json({
+                status: '0',
+                msg: '',
+                result: 'suc'
+            });
+        }
+    });
+});
+
+//修改购物车商品数量
+router.post("/cartEdit", function (req, res, next) {
+    var userId = req.cookies.userId,
+        productId = req.body.productId,
+        productNum = req.body.productNum,
+    checked = req.body.checked;
+    //更新数据库
+    Users.update({"userId": userId, "cartList.productId": productId}, {
+        "cartList.$.productNum": productNum,
+        "cartList.$.checked": checked
+    }, function (err, doc) {
+        //数据库操作失败
         if(err){
             //删除失败
             res.json({
@@ -126,7 +154,7 @@ router.post("/cartDel", function (req, res, next) {
                 result: 'suc'
             });
         }
-    });
-});
+    })
+})
 
 module.exports = router;
