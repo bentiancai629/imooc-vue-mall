@@ -74,7 +74,8 @@
                         <!--                        地址列表信息渲染-->
                         <div class="addr-list">
                             <ul>
-                                <li v-for="(item,index) in addressListFilter" v-bind:class="{'check':checkIndex==index}" @click="checkIndex=index">
+                                <li v-for="(item,index) in addressListFilter" v-bind:class="{'check':checkIndex==index}"
+                                    @click="checkIndex=index">
                                     <dl>
                                         <dt>{{ item.userName }}</dt>
                                         <dd class="address">{{ item.streetName }}</dd>
@@ -87,10 +88,13 @@
                                             </svg>
                                         </a>
                                     </div>
+                                    <!--                                    设置默认地址-->
                                     <div class="addr-opration addr-set-default">
-                                        <a href="javascript:;" class="addr-set-default-btn"><i>Set default</i></a>
+                                        <a href="javascript:;" class="addr-set-default-btn" v-if="!item.isDefault"
+                                           @click="setDefault(item.addressId)"><i>Set default</i></a>
                                     </div>
-                                    <div class="addr-opration addr-default">Default address</div>
+                                    <!--                                    默认地址 取反以后只有一个Set default存在-->
+                                    <div class="addr-opration addr-default" v-if="item.isDefault">Default address</div>
                                 </li>
                                 <li class="addr-new">
                                     <div class="add-new-inner">
@@ -107,7 +111,8 @@
 
                         <!--                        展开地址列表-->
                         <div class="shipping-addr-more">
-                            <a class="addr-more-btn up-down-btn" href="javascript:;" @click="expand" v-bind:class="{'open':limit>3}">
+                            <a class="addr-more-btn up-down-btn" href="javascript:;" @click="expand"
+                               v-bind:class="{'open':limit>3}">
                                 more
                                 <i class="i-up-down">
                                     <i class="i-up-down-l"></i>
@@ -189,9 +194,20 @@
             expand() {
                 if (this.limit == 3) {
                     this.limit = this.addressList.length;
-                }else{
+                } else {
                     this.limit = 3;
                 }
+            },
+            //设置默认地址
+            setDefault(addressId) {
+                axios.post("/users/setDefault", {
+                    addressId: addressId
+                }).then((response) => {
+                    let res = response.data;
+                    if (res.status == '0') {
+                       this.init();
+                    }
+                });
             }
         }
     }
