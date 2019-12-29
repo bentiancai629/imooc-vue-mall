@@ -4,8 +4,7 @@ var router = express.Router();
 //导入模型
 var Users = require('./../models/users');
 
-
-//登陆的二级路由设置
+//登入的二级路由设置
 router.post("/login", function(req, res, next) {
     var param = {
         userName:req.body.userName,
@@ -38,5 +37,21 @@ router.post("/login", function(req, res, next) {
         }
     });
 });
+
+
+// 登出接口
+router.post('/logout',function (req,res,next) {
+    // 清理cookie
+    res.cookie("userId", "", {
+        path:'/',
+        maxAge: -1
+    });
+    res.json({
+        status: '0',
+        msg: '',
+        result: ''
+    });
+});
+
 
 module.exports = router;
