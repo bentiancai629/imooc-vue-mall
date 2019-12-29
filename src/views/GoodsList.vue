@@ -16,7 +16,8 @@
                     <span class="sortby">Sort by:</span>
                     <a href="javascript:void(0)" class="default cur">Default</a>
                     <a @click="sortGoods" href="javascript:void(0)" class="price">Price
-                        <svg class="icon icon-arrow-short">
+                        <!--     升降序箭头                       -->
+                        <svg class="icon icon-arrow-short" v-bind:class="{ 'sort-up':!sortFlag}">
                             <use xlink:href="#icon-arrow-short"></use>
                         </svg>
                     </a>
@@ -72,15 +73,53 @@
                     </div>
                 </div>
             </div>
-<!--            &lt;!&ndash; filterby遮罩 通过控制v-show的布尔值控制弹出 &ndash;&gt;-->
+            <!-- &lt;!&ndash; filterby遮罩 通过控制v-show的布尔值控制弹出 &ndash;&gt;-->
             <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
         </div>
+
+        <!--模态框 父子组件通信-->
+        <modal v-bind:mdShow="mdShow" @click="closeModal">
+            <!--Modal中的slot-name对应-->
+            <p slot="message">
+                请先登陆 否则无法加入到购物车中！
+            </p>
+            <div slot="btnGroup">
+                <a class="btn btn--m" href="javascript:;" @click="mdShow=false">关闭</a>
+            </div>
+        </modal>
+
+        <!--加入购物车成功模态框-->
+        <modal v-bind:mdShow="mdShowCart" @click="closeModal">
+            <!--Modal中的slot-name对应-->
+            <p slot="message">
+                <svg class="icon-status-ok">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-status-ok"></use>
+                </svg>
+                <span>加入到购物车成功!</span>
+            </p>
+            <div slot="btnGroup">
+                <a class="btn btn--m" href="javascript:;" @click="mdShowCart=false">继续购物</a>
+                <router-link class="btn btn--m" href="javascript:;" to="/cart">查看购物车</router-link>
+            </div>
+        </modal>
 
         <!--页脚-->
         <nav-footer></nav-footer>
     </div>
 </template>
 
+<style>
+    /*排序箭头*/
+    .sort-up{
+        transform: rotate(180deg);
+        transition:all .3s ease-out;
+    }
+    /*切换购物车效果*/
+    .btn:hover{
+        background-color: #ffe5e6;
+        transition:all .3s ease-out;
+    }
+</style>
 <script>
     // 导入样式
     import './../assets/css/base.css'
@@ -90,7 +129,7 @@
     import NavHeader from '@/components/NavHeader'
     import Bread from '@/components/Bread'
     import NavFooter from '@/components/NavFooter'
-
+    import Modal from '@/components/Modal'
     // 导入插件
     import axios from 'axios'
 
@@ -129,7 +168,9 @@
                 overLayFlag: false,
                 sortFlag: true,
                 busy: true,
-                loading:false
+                loading:false,
+                mdShow:false,
+                mdShowCart:false
             }
         },
 
@@ -137,6 +178,7 @@
             NavHeader,
             NavFooter,
             Bread,
+            Modal
         },
         mounted: function () {
             //初始化时候加载商品数据
@@ -221,16 +263,22 @@
             addCart(productId){
                 axios.post('/goods/addCart',{
                     productId:productId
-                }).then((res)=>{
+                }).then((response)=>{
                         //请求成功
-                    console.log("res: " + res.status);
-                    if(res.status=='0'){  //todo status=0?
-                        alert("加入购物车成功: ");
+                    let res = response.data;
+                    if(res.status=='0'){
+                        // alert("加入购物车成功: ");
+                        this.mdShowCart = true;
                     }else {
-
-                        alert("加入购物车失败: "+res.data.msg);
+                        // alert("加入购物车失败: "+res.data.msg);
+                        this.mdShow = true; //变量通过modal传递到主键
                     }
                 });
+            },
+
+            //关闭模态框
+            closeModal(){
+                this.mdShow =false;
             }
         }
     }
