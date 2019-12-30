@@ -1,10 +1,10 @@
 <template>
     <div>
         <nav-header></nav-header>
-        <bread>
+        <nav-bread>
             <!-- 插槽slot -->
             <span>My Cart</span>
-        </bread>
+        </nav-bread>
         <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1"
              xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <defs>
@@ -186,7 +186,7 @@
 
     // 导入组件
     import NavHeader from '@/components/NavHeader'
-    import Bread from '@/components/Bread'
+    import NavBread from '@/components/NavBread'
     import NavFooter from '@/components/NavFooter'
     import Modal from '@/components/Modal'
     import axios from 'axios'
@@ -195,7 +195,7 @@
         components: {
             NavHeader,
             NavFooter,
-            Bread,
+            NavBread,
             Modal
         },
         data() {

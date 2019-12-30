@@ -63,12 +63,10 @@ import "./../assets/css/product.css";
 
 import NavHeader from "../components/NavHeader";
 import NavFooter from "../components/NavFooter";
-import Bread from "../components/Bread";
 import axios from "axios";
 
 export default {
   components: {
-    Bread,
     NavFooter,
     NavHeader
   },

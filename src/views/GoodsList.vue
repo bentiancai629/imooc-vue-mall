@@ -4,11 +4,11 @@
         <nav-header></nav-header>
         <!-- 面包屑-->
 
-        <bread>
+        <nav-bread>
             <!-- 插槽slot -->
             <span>Goods</span>
             <span></span>
-        </bread>
+        </nav-bread>
         <!-- 其他 -->
         <div class="accessory-result-page accessory-page">
             <div class="container">
@@ -127,7 +127,7 @@
 
     // 导入组件
     import NavHeader from '@/components/NavHeader'
-    import Bread from '@/components/Bread'
+    import NavBread from '@/components/NavBread'
     import NavFooter from '@/components/NavFooter'
     import Modal from '@/components/Modal'
     // 导入插件
@@ -177,7 +177,7 @@
         components: {
             NavHeader,
             NavFooter,
-            Bread,
+            NavBread,
             Modal
         },
         mounted: function () {
