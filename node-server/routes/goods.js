@@ -16,7 +16,7 @@ mongoose.connection.on("connected", function () {
 mongoose.connection.on("error", function () {
     console.log("MongoDB connected failed.")
 });
-
+//
 //关闭连接
 mongoose.connection.on("disconnected", function () {
     console.log("MongoDB connected disconnected.")
@@ -156,7 +156,6 @@ router.post('/addCart',function (req,res,next) {
                                             result:'suc'
                                         })
                                     }
-
                                 });
 
                             }

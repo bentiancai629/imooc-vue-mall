@@ -26,7 +26,9 @@ var userSchema = new Schema({
             "isDefault": Boolean
         }
     ]
-});
+},{
+    usePushEach: true
+    });
 
 module.exports = mongoose.model('User', userSchema);
 

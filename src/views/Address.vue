@@ -233,10 +233,11 @@
             },
 
             //删除地址
-            delAddress(addressId) {
+            delAddress() {
                 this.isMdShow= true; //弹出模态框
                 axios.post("/users/delAddress", {
-                    addressId: this.addressId
+                    // addressId: this.addressId
+                    addressId: "100004"
                 }).then((response) => {
                     let res = response.data;
                     if (res.status == '0') {
