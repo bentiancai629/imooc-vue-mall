@@ -78,7 +78,7 @@ router.get("/checkLogin", function (req, res, next) {
 //查询用户名下的购物车数据
 router.get("/cartList", function (req, res, next) {
     var userId = req.cookies.userId;
-    Users.findOne({userId: userId}, function (err, doc) {
+    Users.findOne({ userId: userId }, function (err, doc) {
         if (err) {
             res.json({
                 status: '1',
@@ -135,7 +135,7 @@ router.post("/cartEdit", function (req, res, next) {
         productNum = req.body.productNum,
         checked = req.body.checked;
     //更新数据库
-    Users.update({"userId": userId, "cartList.productId": productId}, {
+    Users.update({ "userId": userId, "cartList.productId": productId }, {
         "cartList.$.productNum": productNum,
         "cartList.$.checked": checked
     }, function (err, doc) {
@@ -161,7 +161,7 @@ router.post("/cartEdit", function (req, res, next) {
 router.post("/editCheckAll", function (req, res, next) {
     var userId = req.cookies.userId,
         checkAll = req.body.checkAll;
-    Users.findOne({userId: userId}, function (err, user) {
+    Users.findOne({ userId: userId }, function (err, user) {
         if (err) {
             //删除失败
             res.json({
@@ -200,7 +200,7 @@ router.post("/editCheckAll", function (req, res, next) {
 //查询用户地址
 router.get("/addressList", function (req, res, next) {
     var userId = req.cookies.userId;
-    Users.findOne({userId: userId}, function (err, doc) {
+    Users.findOne({ userId: userId }, function (err, doc) {
         if (err) {
             res.json({
                 status: '1',
@@ -228,7 +228,7 @@ router.post("/setDefault", function (req, res, next) {
             result: ''
         });
     } else {
-        Users.findOne({userId: userId}, function (err, doc) {
+        Users.findOne({ userId: userId }, function (err, doc) {
             if (err) {
                 res.json({
                     status: '1003',
@@ -300,7 +300,7 @@ router.post("/payment", function (req, res, next) {
         addressId = req.body.addressId,
         orderTotal = req.body.orderTotal;
 
-    Users.findOne({userId: userId}, function (err, user) {
+    Users.findOne({ userId: userId }, function (err, user) {
         if (err) {
             //删除失败
             res.json({
@@ -342,10 +342,10 @@ router.post("/payment", function (req, res, next) {
                 orderStatus: '1',
                 createDate: createDate
             };
-       
-            console.log("orderList长度"+user.orderList.length);
+
+            console.log("orderList长度" + user.orderList.length);
             user.orderList.push(order);
-            console.log("orderList长度"+user.orderList.length);
+            console.log("orderList长度" + user.orderList.length);
             user.save(function (err1, doc1) {
                 if (err1) {
                     console.log("error in save");
@@ -370,52 +370,79 @@ router.post("/payment", function (req, res, next) {
 });
 
 //根据订单Id查询订单信息
-router.get("/orderDetail",function (req,res,next) {
+router.get("/orderDetail", function (req, res, next) {
     var userId = req.cookies.userId,
         orderId = req.param("orderId");
-    Users.findOne({userId:userId},function (err,userInfo) {
-      if(err){
-        res.json({
-          status:'1',
-          msg: err.message,
-          result:''
-        });
-      }else{
-        var orderList = userInfo.orderList;
-        if(orderList.length>0){
-          var orderTotal = 0;
-          orderList.forEach((item)=>{
-            if(item.orderId == orderId){
-              orderTotal = item.orderTotal;
-            }
-          });
-          if(orderTotal>0){
+    Users.findOne({ userId: userId }, function (err, userInfo) {
+        if (err) {
             res.json({
-              status:'0',
-              msg:'',
-              result:{
-                orderId:orderId,
-                orderTotal:orderTotal
-              }
-            })
-          }else {
-            res.json({
-              status:'120002',
-              msg: '无此订单挂单',
-              result:''
+                status: '1',
+                msg: err.message,
+                result: ''
             });
-          }
-        }else{
-          res.json({
-            status:'120001',
-            msg: '当前用户未创建订单',
-            result:''
-          });
+        } else {
+            var orderList = userInfo.orderList;
+            if (orderList.length > 0) {
+                var orderTotal = 0;
+                orderList.forEach((item) => {
+                    if (item.orderId == orderId) {
+                        orderTotal = item.orderTotal;
+                    }
+                });
+                if (orderTotal > 0) {
+                    res.json({
+                        status: '0',
+                        msg: '',
+                        result: {
+                            orderId: orderId,
+                            orderTotal: orderTotal
+                        }
+                    })
+                } else {
+                    res.json({
+                        status: '120002',
+                        msg: '无此订单挂单',
+                        result: ''
+                    });
+                }
+            } else {
+                res.json({
+                    status: '120001',
+                    msg: '当前用户未创建订单',
+                    result: ''
+                });
+            }
         }
-      }
     })
-  });
+});
 
+//查询cartCount
+router.get("/getCartCount", function (req, res, next) {
+    if (req.cookies && req.cookies.userId) {
+        var userId = req.cookies.userId;
+        Users.findOne({ userId: userId }, function (err, doc) {
+            if (err) {
+                res.json({
+                    status: '1',
+                    msg: err.message,
+                    result: ''
+                });
+            } else {
+                var cartList = doc.cartList;
+                let cartCount = 0;
+                cartList.map(function (item) {
+                    cartCount += parseInt(item.productNum);
+                })
+                res.json({
+                    status: '0',
+                    msg: '',
+                    result: cartCount
+                    
+                })
+            }
+        });
+    }
+});
 module.exports = router;
 
 

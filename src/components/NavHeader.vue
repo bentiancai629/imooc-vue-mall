@@ -84,7 +84,15 @@
                 userPwd: '',
                 errorTip: false,
                 loginModalFlag: false,
-                nickName:false,
+                // nickName:''
+            }
+        },
+        computed:{
+            nickName(){
+                return this.$store.state.nickName;
+            },
+            cartCount(){
+                return this.$store.state.cartCount;
             }
         },
         mounted() {
@@ -98,7 +106,14 @@
                     let res = response.data;
                     if(res.status=='0'){
                         //cookies的用户名或者''
-                        this.nickName = res.result;
+                        // this.nickName = res.result;
+                        this.$store.commit("updateUserInfo",res.result);
+                        this.loginModalFlag = false;
+                        this.getCartCount();
+                    }else{
+                        if(this.$route.path!="/goods"){
+                            this.$router.push("/goods");
+                        }
                     }
                 });
             },
@@ -121,7 +136,8 @@
                     if (res.status == '0') {
                         this.errorTip = false;
                         this.loginModalFlag = false;
-                        this.nickName = res.result.userName;
+                        // this.nickName = res.result.userName;
+                        this.getCartCount();
                     } else {
                         this.errorTip = true;
                     }
@@ -133,9 +149,17 @@
                 axios.post("/users/logout").then((response)=>{
                     let res = response.data;
                     if(res.status=='0'){
-                        this.nickName = '';
+                        // this.nickName = '';
+                        this.$store.commit("updateUserInfo",'');
                     }
                 })
+            },
+            //vuex获取购物车数量
+            getCartCount(){
+                axios.get("/users/getCartCount").then((response)=>{
+                    let res= response.data;
+                    this.$store.commit("updateCartCount",res.result);
+                });
             }
         }
 
