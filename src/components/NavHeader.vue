@@ -25,8 +25,9 @@
                     <span class="navbar-link"></span>
                     <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-if="!nickName">Login</a>
                     <a href="javascript:void(0)" class="navbar-link" @click="logout" v-if="nickName">Logout</a>
+                    <!-- 购物车数量图标 -->
                     <div class="navbar-cart-container">
-                        <span class="navbar-cart-count"></span>
+                        <span class="navbar-cart-count" v-if="cartCount>0">{{ cartCount }}</span>
                         <a class="navbar-link navbar-cart-link" href="/#/cart">
                             <svg class="navbar-cart-logo">
                                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
@@ -77,17 +78,18 @@
 <script>
     import './../assets/css/login.css'
     import axios from 'axios'  //自动去nodemodules加载
+    import { mapState } from 'vuex'
     export default {
         data() {
             return {
-                userName: '',
-                userPwd: '',
+                userName: 'admin',
+                userPwd: '123456',
                 errorTip: false,
                 loginModalFlag: false,
-                // nickName:''
             }
         },
         computed:{
+            // ...mapState( ['nickName', 'cartCount'] )
             nickName(){
                 return this.$store.state.nickName;
             },
@@ -111,9 +113,9 @@
                         this.loginModalFlag = false;
                         this.getCartCount();
                     }else{
-                        if(this.$route.path!="/goods"){
-                            this.$router.push("/goods");
-                        }
+                        // if(this.$route.path!="/goods"){
+                            // this.$router.push("/goods");
+                        // }
                     }
                 });
             },
@@ -158,7 +160,7 @@
             getCartCount(){
                 axios.get("/users/getCartCount").then((response)=>{
                     let res= response.data;
-                    this.$store.commit("updateCartCount",res.result);
+                    this.$store.commit("initCartCount",res.result);
                 });
             }
         }

@@ -269,6 +269,7 @@
                     if(res.status=='0'){
                         // alert("加入购物车成功: ");
                         this.mdShowCart = true;
+                        this.$store.commit("initCartCount",res.result);
                     }else {
                         // alert("加入购物车失败: "+res.data.msg);
                         this.mdShow = true; //变量通过modal传递到主键
