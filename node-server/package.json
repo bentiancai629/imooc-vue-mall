@@ -20,7 +20,7 @@
     "jade": "~1.11.0",
     "mongoose": "^4.10.3",
     "moongoose": "^0.0.5",
-    "morgan": "~1.7.0",
+    "morgan": "~1.9.1",
     "serve-favicon": "~2.3.2"
   },
   "devDependencies": {
