@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       msg: "hello vuex"
-    };
+    }
   }
-};
+}
 </script>

@@ -46,6 +46,10 @@ Toast.install = function (Vue,options) {
     Vue.prototype.$toast['error']=function(message,option){
         Vue.prototype.$toast(message,option);
     }
+
+    if(window.Vue){
+        Vue.use(Toast);
+    }
 }
 //导出类
 export default Toast;
